@@ -49,6 +49,8 @@ SampleValues::SampleValues() {
 /// \brief Initializes the members to their default values.
 AnalyzedData::AnalyzedData() {
 	this->amplitude = 0.0;
+	this->min = 0.0;
+	this->max = 0.0;
 	this->frequency = 0.0;
 }
 
@@ -343,6 +345,8 @@ void DataAnalyzer::run() {
 			}
 			
 			channelData->amplitude = maximalVoltage - minimalVoltage;
+			channelData->min = minimalVoltage;
+			channelData->max = maximalVoltage;
 			
 			// Get the frequency from the correlation results
 			double minimumCorrelation = correlation[0];

@@ -86,7 +86,9 @@ class DsoWidget : public QWidget {
 		QList<QLabel *> measurementGainLabel; ///< The gain for the voltage (V/div)
 		QList<QLabel *> measurementMagnitudeLabel; ///< The magnitude for the spectrum (dB/div)
 		QList<QLabel *> measurementMiscLabel; ///< Coupling or math mode
+		QList<QLabel *> measurementMinimalVoltageLabel; ///< Minimal (V)
 		QList<QLabel *> measurementAmplitudeLabel; ///< Amplitude of the signal (V)
+		QList<QLabel *> measurementMaximalVoltageLabel; ///< Maximal (V)
 		QList<QLabel *> measurementFrequencyLabel; ///< Frequency of the signal (Hz)
 		
 		DsoSettings *settings; ///< The settings provided by the main window

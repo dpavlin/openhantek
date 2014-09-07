@@ -65,6 +65,8 @@ struct SampleData {
 struct AnalyzedData {
 	SampleData samples; ///< Voltage and spectrum values
 	double amplitude; ///< The amplitude of the signal
+	double min; ///< minimal voltage
+	double max; ///< maximal voltage
 	double frequency; ///< The frequency of the signal
 	
 	AnalyzedData();

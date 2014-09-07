@@ -172,6 +172,8 @@ DsoWidget::DsoWidget(DsoSettings *settings, DataAnalyzer *dataAnalyzer, QWidget 
 	this->measurementLayout->setColumnStretch(3, 2);
 	this->measurementLayout->setColumnStretch(4, 3);
 	this->measurementLayout->setColumnStretch(5, 3);
+	this->measurementLayout->setColumnStretch(6, 3);
+	this->measurementLayout->setColumnStretch(7, 3);
 	for(int channel = 0; channel < this->settings->scope.voltage.count(); ++channel) {
 		tablePalette.setColor(QPalette::WindowText, this->settings->view.color.screen.voltage[channel]);
 		this->measurementNameLabel.append(new QLabel(this->settings->scope.voltage[channel].name));
@@ -185,9 +187,15 @@ DsoWidget::DsoWidget(DsoSettings *settings, DataAnalyzer *dataAnalyzer, QWidget 
 		this->measurementMagnitudeLabel.append(new QLabel());
 		this->measurementMagnitudeLabel[channel]->setAlignment(Qt::AlignRight);
 		this->measurementMagnitudeLabel[channel]->setPalette(tablePalette);
+		this->measurementMinimalVoltageLabel.append(new QLabel());
+		this->measurementMinimalVoltageLabel[channel]->setAlignment(Qt::AlignRight);
+		this->measurementMinimalVoltageLabel[channel]->setPalette(palette);
 		this->measurementAmplitudeLabel.append(new QLabel());
 		this->measurementAmplitudeLabel[channel]->setAlignment(Qt::AlignRight);
 		this->measurementAmplitudeLabel[channel]->setPalette(palette);
+		this->measurementMaximalVoltageLabel.append(new QLabel());
+		this->measurementMaximalVoltageLabel[channel]->setAlignment(Qt::AlignRight);
+		this->measurementMaximalVoltageLabel[channel]->setPalette(palette);
 		this->measurementFrequencyLabel.append(new QLabel());
 		this->measurementFrequencyLabel[channel]->setAlignment(Qt::AlignRight);
 		this->measurementFrequencyLabel[channel]->setPalette(palette);
@@ -196,8 +204,10 @@ DsoWidget::DsoWidget(DsoSettings *settings, DataAnalyzer *dataAnalyzer, QWidget 
 		this->measurementLayout->addWidget(this->measurementMiscLabel[channel], channel, 1);
 		this->measurementLayout->addWidget(this->measurementGainLabel[channel], channel, 2);
 		this->measurementLayout->addWidget(this->measurementMagnitudeLabel[channel], channel, 3);
-		this->measurementLayout->addWidget(this->measurementAmplitudeLabel[channel], channel, 4);
-		this->measurementLayout->addWidget(this->measurementFrequencyLabel[channel], channel, 5);
+		this->measurementLayout->addWidget(this->measurementMinimalVoltageLabel[channel], channel, 4);
+		this->measurementLayout->addWidget(this->measurementAmplitudeLabel[channel], channel, 5);
+		this->measurementLayout->addWidget(this->measurementMaximalVoltageLabel[channel], channel, 6);
+		this->measurementLayout->addWidget(this->measurementFrequencyLabel[channel], channel, 7);
 		if((unsigned int) channel < this->settings->scope.physicalChannels)
 			this->updateVoltageCoupling(channel);
 		else
@@ -273,12 +283,16 @@ void DsoWidget::setMeasurementVisible(unsigned int channel, bool visible) {
 	this->measurementMiscLabel[channel]->setVisible(visible);
 	this->measurementGainLabel[channel]->setVisible(visible);
 	this->measurementMagnitudeLabel[channel]->setVisible(visible);
+	this->measurementMinimalVoltageLabel[channel]->setVisible(visible);
 	this->measurementAmplitudeLabel[channel]->setVisible(visible);
+	this->measurementMaximalVoltageLabel[channel]->setVisible(visible);
 	this->measurementFrequencyLabel[channel]->setVisible(visible);
 	if(!visible) {
 		this->measurementGainLabel[channel]->setText(QString());
 		this->measurementMagnitudeLabel[channel]->setText(QString());
+		this->measurementMinimalVoltageLabel[channel]->setText(QString());
 		this->measurementAmplitudeLabel[channel]->setText(QString());
+		this->measurementMaximalVoltageLabel[channel]->setText(QString());
 		this->measurementFrequencyLabel[channel]->setText(QString());
 	}
 }
@@ -494,7 +508,9 @@ void DsoWidget::dataAnalyzed() {
 	for(int channel = 0; channel < this->settings->scope.voltage.count(); ++channel) {
 		if(this->settings->scope.voltage[channel].used && this->dataAnalyzer->data(channel)) {			
 			// Amplitude string representation (4 significant digits)
+			this->measurementMinimalVoltageLabel[channel]->setText(Helper::valueToString(this->dataAnalyzer->data(channel)->min, Helper::UNIT_VOLTS, 4));
 			this->measurementAmplitudeLabel[channel]->setText(Helper::valueToString(this->dataAnalyzer->data(channel)->amplitude, Helper::UNIT_VOLTS, 4));
+			this->measurementMaximalVoltageLabel[channel]->setText(Helper::valueToString(this->dataAnalyzer->data(channel)->max, Helper::UNIT_VOLTS, 4));
 			// Frequency string representation (5 significant digits)
 			this->measurementFrequencyLabel[channel]->setText(Helper::valueToString(this->dataAnalyzer->data(channel)->frequency, Helper::UNIT_HERTZ, 5));
 		}
