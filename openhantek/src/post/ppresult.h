@@ -14,6 +14,12 @@ struct SampleValues {
     double interval = 0.0;      ///< The interval between two sample values
 };
 
+struct ComputedVoltages {
+	float average;
+	float min;
+	float max;
+};
+
 /// \brief Struct for the analyzed data.
 struct DataChannel {
     SampleValues voltage;   ///< The time-domain voltage levels (V)
@@ -21,7 +27,7 @@ struct DataChannel {
 
     double frequency = 0.0; ///< The frequency of the signal
     // Calculate peak-to-peak voltage
-    double computeAmplitude() const;
+    ComputedVoltages computeVoltages() const;
 };
 
 typedef std::vector<QVector3D> ChannelGraph;

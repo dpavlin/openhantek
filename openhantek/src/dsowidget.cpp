@@ -632,8 +632,12 @@ void DsoWidget::showNew(std::shared_ptr<PPresult> data) {
     for (ChannelID channel = 0; channel < scope->voltage.size(); ++channel) {
         if (scope->voltage[channel].used && data.get()->data(channel)) {
             // Amplitude string representation (4 significant digits)
+	    ComputedVoltages cv = data.get()->data(channel)->computeVoltages();
             measurementAmplitudeLabel[channel]->setText(
-                valueToString(data.get()->data(channel)->computeAmplitude(), UNIT_VOLTS, 4));
+                valueToString(cv.max - cv.min, UNIT_VOLTS, 4)
+		    + tr(" min ") + valueToString(cv.min, UNIT_VOLTS, 4)
+		    + tr(" max ") + valueToString(cv.max, UNIT_VOLTS, 4)
+		);
             // Frequency string representation (5 significant digits)
             measurementFrequencyLabel[channel]->setText(
                 valueToString(data.get()->data(channel)->frequency, UNIT_HERTZ, 5));
