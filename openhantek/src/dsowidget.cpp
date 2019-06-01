@@ -111,6 +111,8 @@ DsoWidget::DsoWidget(DsoSettingsScope *scope, DsoSettingsView *view, const Dso::
     measurementLayout->setColumnStretch(3, 2);
     measurementLayout->setColumnStretch(4, 3);
     measurementLayout->setColumnStretch(5, 3);
+    measurementLayout->setColumnStretch(6, 3);
+    measurementLayout->setColumnStretch(7, 3);
     for (ChannelID channel = 0; channel < scope->voltage.size(); ++channel) {
         tablePalette.setColor(QPalette::WindowText, view->screen.voltage[channel]);
         measurementNameLabel.push_back(new QLabel(scope->voltage[channel].name));
@@ -127,6 +129,12 @@ DsoWidget::DsoWidget(DsoSettingsScope *scope, DsoSettingsView *view, const Dso::
         measurementAmplitudeLabel.push_back(new QLabel());
         measurementAmplitudeLabel[channel]->setAlignment(Qt::AlignRight);
         measurementAmplitudeLabel[channel]->setPalette(palette);
+        measurementVoltageMinLabel.push_back(new QLabel());
+        measurementVoltageMinLabel[channel]->setAlignment(Qt::AlignRight);
+        measurementVoltageMinLabel[channel]->setPalette(palette);
+        measurementVoltageMaxLabel.push_back(new QLabel());
+        measurementVoltageMaxLabel[channel]->setAlignment(Qt::AlignRight);
+        measurementVoltageMaxLabel[channel]->setPalette(palette);
         measurementFrequencyLabel.push_back(new QLabel());
         measurementFrequencyLabel[channel]->setAlignment(Qt::AlignRight);
         measurementFrequencyLabel[channel]->setPalette(palette);
@@ -136,7 +144,9 @@ DsoWidget::DsoWidget(DsoSettingsScope *scope, DsoSettingsView *view, const Dso::
         measurementLayout->addWidget(measurementGainLabel[channel], (int)channel, 2);
         measurementLayout->addWidget(measurementMagnitudeLabel[channel], (int)channel, 3);
         measurementLayout->addWidget(measurementAmplitudeLabel[channel], (int)channel, 4);
-        measurementLayout->addWidget(measurementFrequencyLabel[channel], (int)channel, 5);
+        measurementLayout->addWidget(measurementVoltageMinLabel[channel], (int)channel, 5);
+        measurementLayout->addWidget(measurementVoltageMaxLabel[channel], (int)channel, 6);
+        measurementLayout->addWidget(measurementFrequencyLabel[channel], (int)channel, 7);
         if ((unsigned)channel < spec->channels)
             updateVoltageCoupling((unsigned)channel);
         else
@@ -355,10 +365,14 @@ void DsoWidget::setMeasurementVisible(ChannelID channel) {
     measurementMiscLabel[channel]->setVisible(visible);
 
     measurementAmplitudeLabel[channel]->setVisible(visible);
+    measurementVoltageMinLabel[channel]->setVisible(visible);
+    measurementVoltageMaxLabel[channel]->setVisible(visible);
     measurementFrequencyLabel[channel]->setVisible(visible);
     if (!visible) {
         measurementGainLabel[channel]->setText(QString());
         measurementAmplitudeLabel[channel]->setText(QString());
+        measurementVoltageMinLabel[channel]->setText(QString());
+        measurementVoltageMaxLabel[channel]->setText(QString());
         measurementFrequencyLabel[channel]->setText(QString());
     }
 
@@ -634,10 +648,11 @@ void DsoWidget::showNew(std::shared_ptr<PPresult> data) {
             // Amplitude string representation (4 significant digits)
 	    ComputedVoltages cv = data.get()->data(channel)->computeVoltages();
             measurementAmplitudeLabel[channel]->setText(
-                valueToString(cv.max - cv.min, UNIT_VOLTS, 4)
-		    + tr(" min ") + valueToString(cv.min, UNIT_VOLTS, 4)
-		    + tr(" max ") + valueToString(cv.max, UNIT_VOLTS, 4)
-		);
+                valueToString(cv.max - cv.min, UNIT_VOLTS, 4));
+	    measurementVoltageMinLabel[channel]->setText(
+		 tr("min ") + valueToString(cv.min, UNIT_VOLTS, 4));
+            measurementVoltageMaxLabel[channel]->setText(
+		 tr("max ") + valueToString(cv.max, UNIT_VOLTS, 4));
             // Frequency string representation (5 significant digits)
             measurementFrequencyLabel[channel]->setText(
                 valueToString(data.get()->data(channel)->frequency, UNIT_HERTZ, 5));
